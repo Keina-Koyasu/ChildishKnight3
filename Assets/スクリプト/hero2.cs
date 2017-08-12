@@ -34,10 +34,12 @@ public class hero2 : MonoBehaviour {
 	//private Renderer renderer; //ダメージ処理のために仮で作っとく
 
 	//public bool cooltime = true;
+	private bool footmusic; //足音用falseで音がなっている状態
 	private bool isGrounded; //着地判定
 	private bool isSlop; //着地判定
 	public bool Attack = true; //攻撃可能
 	public bool move = true;
+
 
 	void Start () {
 		//各コンポーネントをキャッシュしておく
@@ -82,6 +84,18 @@ public class hero2 : MonoBehaviour {
 		Attack = true;
 		SecondAttack = false;
 		attackCount = 0;
+	}
+
+	//ここは足音に関する項目足音の多重入力を阻止するため一瞬だけplayして止まったら音を消す。空中に行った時も音を消す。foolmusicがfalseになっているときは音がなっている状態。こんなことするもの全てはパッドスティックのせい
+	void Footmusic(){
+		if(footmusic&&isGrounded){
+			GetComponent<AudioSource> ().Play();
+			footmusic = false;
+		}
+		if(footmusic==false&&isGrounded==false){
+			GetComponent<AudioSource> ().Stop();
+			footmusic = true;
+		}
 	}
 
 
@@ -187,13 +201,14 @@ public class hero2 : MonoBehaviour {
 			Application.LoadLevel ("Title");
 
 		}
+		Debug.Log (footmusic);
+
 
 
 		if (isSlop) {
 			 //rigidbody2D.AddForce (Vector2.up * 50);
 		} 
 		
-
 
 		//moveがtrueのときに移動とか攻撃とかできる
 		if(move){
@@ -204,6 +219,7 @@ public class hero2 : MonoBehaviour {
 			transform.localScale = temp;
 			if (isGrounded)
 				anim.SetBool ("wolk 0", true);
+				Footmusic ();
 		} else if(1 == Input.GetAxisRaw ("Horizontal") || Input.GetKey ("right")){
 			rigidbody2D.velocity = new Vector2 (1 * speed, rigidbody2D.velocity.y);
 			Vector2 temp = transform.localScale;
@@ -211,8 +227,13 @@ public class hero2 : MonoBehaviour {
 			transform.localScale = temp;
 			if (isGrounded)
 				anim.SetBool ("wolk 0", true);
+				Footmusic ();
+				
 		} else {
 			anim.SetBool ("wolk 0", false);
+				GetComponent<AudioSource> ().Stop();
+				footmusic = true;
+
 		}
 		//回避
 		if(Input.GetKeyDown("w")&&Attack||Input.GetButtonDown ("Douge")&&Attack){
