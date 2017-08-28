@@ -41,16 +41,19 @@ public class mob_AI : MonoBehaviour {
 
 	}
 	IEnumerator Dead(){
+		//GetComponent<AudioSource> ().Play ();
 		ATJ.GetComponent<BoxCollider2D>().enabled = false;
 		GetComponent<ParticleSource> ().particle ();
 		anim.SetTrigger ("die");
 		yield return null;
 		yield return new WaitForSeconds(0.4f);
+		GetComponent<AudioSource> ().Play ();
 		GetComponent<SpriteRenderer>().enabled = false;
 		yield return null;
 		yield return new WaitForSeconds(1.00f);
 		hero.gameObject.SendMessage("EXPin", xp); 
 		Destroy(this.gameObject);
+		GetComponent<AudioSource> ().Stop ();
 
 	}
 

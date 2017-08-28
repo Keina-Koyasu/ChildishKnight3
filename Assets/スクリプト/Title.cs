@@ -6,7 +6,7 @@ public class Title : MonoBehaviour {
 	public GameObject newgame;
 	public GameObject gallery;
 	public GameObject blackout;
-
+	private float InputTime=0; //入力のクールタイム
 
 	public bool mode = true; //trueだとnewgame
 	// Use this for initialization
@@ -26,29 +26,39 @@ public class Title : MonoBehaviour {
 			gallery.GetComponent<Animator> ().SetBool ("gallery",true);
 		}
 
-			/* ギャラリーモード完成したら使えるようにして
-			if (Input.GetKeyDown ("down")||-1 == Input.GetAxisRaw ("Vertical") ) {
-			if (mode) {
-				mode = false;
-			} else {
-				mode = true;
+			if (InputTime == 0) {
+				if (Input.GetKeyDown ("down") || -1 == Input.GetAxisRaw ("Vertical")) {
+					if (mode) {
+						mode = false;
+						InputTime = 100;
+					} else {
+						mode = true;
+						InputTime = 100;
+					}
+				}
+				if (Input.GetKeyDown ("up") || 1 == Input.GetAxisRaw ("Vertical")) {
+					if (mode == false) {
+						mode = true;
+						InputTime = 100;
+					} else {
+						mode = false;
+						InputTime = 100;
+
+					}
+				}
 			}
-		}
-			if(Input.GetKeyDown("up")||1 == Input.GetAxisRaw ("Vertical") ){
-			if (mode == false) {
-				mode = true;
-			} else {
-				mode = false;
+			if (InputTime > 0) {
+				if (Input.GetAxisRaw ("Vertical") == 0 && Input.GetAxisRaw ("Horizontal") == 0) {
+					InputTime = 0;
+				} else {
+					InputTime -= 5;
+				}
 			}
-		}
-			*/
-			if (Input.GetKey ("a")||Input.GetButtonDown ("Attack")) {
-			if (mode) {
+
+		if (Input.GetKey ("a")||Input.GetButtonDown ("Attack")) {
 				blackout.SetActive (true);
 				blackout.GetComponent<blackout> ().fedein = true ;
-
-				//Application.LoadLevel ("scene1");
-			}		
+				
 		}
 	}
 }

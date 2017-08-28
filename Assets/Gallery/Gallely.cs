@@ -22,11 +22,9 @@ public class Gallely : MonoBehaviour {
 	public GameObject  from;
 	//public GameObject  ;
 	bool CharacterSelect = true;
-//	bool InputCooltime = false;
-	bool once = false;
 
 	private int action_type = 0;
-	private float InputTime=0;
+	private float InputTime=0; //入力のクールタイム
 
 	//キャラクター内のモード
 	enum MovingMode{
@@ -51,14 +49,12 @@ public class Gallely : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		//デバッグ用後で消して
-		if(Input.GetKeyDown("l")){
-			select = MovingSelect.Character ;
-		}
-		if(Input.GetKeyDown("k")){
-			select = MovingSelect.MainManu ;
-		}
+	
+		if (Input.GetButtonDown ("Start")) {
+			Application.LoadLevel ("Title");
 
-		Debug.Log (Input.GetAxis("Vertical"));
+		}
+		 //Debug.Log (Input.GetAxis("Vertical"));
 
 		//街頭キャラのモードになった時そのキャラが表示されるモード切り替えはupdate○○のinput参照
 		switch (select) {
@@ -67,6 +63,7 @@ public class Gallely : MonoBehaviour {
 			manu.SetActive (false);
 			if (Input.GetKeyDown ("space") || Input.GetButtonDown ("Jump")) {
 				select = MovingSelect.MainManu ;
+				GetComponents<AudioSource> ()[1].Play ();
 			}
 
 			switch (mode) {
@@ -94,7 +91,6 @@ public class Gallely : MonoBehaviour {
 
 	void updateMainManu(){
 			//上下で羽ペンが移動する選択
-
 		if (InputTime == 0) {
 			
 			if (Input.GetKeyDown ("up") || 1 == Input.GetAxisRaw ("Vertical")) {
@@ -102,11 +98,13 @@ public class Gallely : MonoBehaviour {
 					Pen.transform.position = new Vector2 (1.44f, -0.95f);
 					CharacterSelect = false;
 					InputTime = 100;
+					GetComponents<AudioSource> ()[0].Play ();
 
 				} else if (CharacterSelect == false) {
 					Pen.transform.position = new Vector2 (1.44f, 2.22f);
 					CharacterSelect = true;
 					InputTime = 100;
+					GetComponents<AudioSource> ()[0].Play ();
 				}
 			}
 			if (Input.GetKeyDown ("down") || -1 == Input.GetAxisRaw ("Vertical")) {
@@ -114,10 +112,12 @@ public class Gallely : MonoBehaviour {
 					Pen.transform.position = new Vector2 (1.44f, -0.95f);
 					CharacterSelect = false;
 					InputTime = 100;
+					GetComponents<AudioSource> ()[0].Play ();
 				} else if (CharacterSelect == false) {
 					Pen.transform.position = new Vector2 (1.44f, 2.22f);
 					CharacterSelect = true;
 					InputTime = 100;
+					GetComponents<AudioSource> ()[0].Play ();
 				}
 			}
 		}
@@ -133,9 +133,11 @@ public class Gallely : MonoBehaviour {
 		if (Input.GetKeyDown ("a")||Input.GetButtonDown ("Attack")) {
 			if(CharacterSelect){
 				select = MovingSelect.Character ;
+				GetComponents<AudioSource> ()[1].Play ();
 
 			}else if(CharacterSelect==false){
 				select = MovingSelect.Movie ;
+				GetComponents<AudioSource> ()[1].Play ();
 			}
 		}
 	}
@@ -156,9 +158,11 @@ public class Gallely : MonoBehaviour {
 			if (Input.GetKeyDown ("p") || 1 == Input.GetAxisRaw ("Horizontal")) {
 				mode = MovingMode.Kakashi;
 				InputTime = 100;
+				GetComponents<AudioSource> ()[0].Play ();
 			} else if (Input.GetKeyDown ("q") || -1 == Input.GetAxisRaw ("Horizontal")) {
 				mode = MovingMode.Pino;
 				InputTime = 100;
+				GetComponents<AudioSource> ()[0].Play ();
 			}
 		}
 		if (InputTime > 0) {
@@ -199,9 +203,11 @@ public class Gallely : MonoBehaviour {
 			if (Input.GetKeyDown ("p") || 1 == Input.GetAxisRaw ("Horizontal")) {
 				mode = MovingMode.Tamashibi;
 				InputTime = 100;
+				GetComponents<AudioSource> ()[0].Play ();
 			} else if (Input.GetKeyDown ("q") || -1 == Input.GetAxisRaw ("Horizontal")) {
 				mode = MovingMode.Hero;
 				InputTime = 100;
+				GetComponents<AudioSource> ()[0].Play ();
 			}
 		}
 		if (InputTime > 0) {
@@ -229,9 +235,11 @@ public class Gallely : MonoBehaviour {
 			if (Input.GetKeyDown ("p") || 1 == Input.GetAxisRaw ("Horizontal")) {
 				mode = MovingMode.Pino;
 				InputTime = 100;
+				GetComponents<AudioSource> ()[0].Play ();
 			} else if (Input.GetKeyDown ("q") || -1 == Input.GetAxisRaw ("Horizontal")) {
 				mode = MovingMode.Kakashi;
 				InputTime = 100;
+				GetComponents<AudioSource> ()[0].Play ();
 			}
 		}
 		if (InputTime > 0) {
@@ -260,9 +268,11 @@ public class Gallely : MonoBehaviour {
 			if (Input.GetKeyDown ("p") || 1 == Input.GetAxisRaw ("Horizontal")) {
 				mode = MovingMode.Hero;
 				InputTime = 100;
+				GetComponents<AudioSource> ()[0].Play ();
 			} else if (Input.GetKeyDown ("q") || -1 == Input.GetAxisRaw ("Horizontal")) {
 				mode = MovingMode.Tamashibi;
 				InputTime = 100;
+				GetComponents<AudioSource> ()[0].Play ();
 			}
 		}
 		if (InputTime > 0) {

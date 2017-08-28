@@ -114,6 +114,8 @@ public class hero2 : MonoBehaviour {
 		}else{
 			transform.Translate(Vector3.right * s);
 		}
+
+		 //ダメージを受けた時にライフが〜
 		if (Life > 0) {
 			//StartCoroutine ("Damage");
 			DamegeEF.SetActive (true);

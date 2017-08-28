@@ -7,6 +7,8 @@ public class blackout : MonoBehaviour {
 	public GameObject tutorial;
 	public GameObject hero;
 	public GameObject text;
+	public GameObject Title;
+	public GameObject Gintro;
 
 	float alfa;
 	public float speed = 0.9f;
@@ -26,14 +28,22 @@ public class blackout : MonoBehaviour {
 	}
 	void DelayMethod(){
 		//StartCoroutine ("tuto");
+	if(Title.GetComponent<Title>().mode==true){
 		Invoke("DelayMethod2", 2.0f);
 		tutorial.SetActive (true);
+		}else if(Title.GetComponent<Title>().mode==false){
+			Invoke("DelayMethod3", 2.0f);
+			Gintro.SetActive (true);
+		}
 
 
 	}
 	void DelayMethod2(){
 		Application.LoadLevel ("scene1");
 
+	}
+	void DelayMethod3(){
+		Application.LoadLevel ("Gallery");
 	}
 	/*
 	IEnumerator tuto(){
@@ -58,8 +68,10 @@ public class blackout : MonoBehaviour {
 		if (fedein) {
 			GetComponent<Image> ().color = new Color (red, green, blue, alfa);
 			alfa += speed;
+
 			//DelayMethodを3.5秒後に呼び出す
 			Invoke("DelayMethod", 2.0f);
+
 		}
 
 	}
