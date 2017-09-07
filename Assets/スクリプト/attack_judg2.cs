@@ -13,7 +13,8 @@ public class attack_judg2 : MonoBehaviour {
 	void Update () {
 	
 	}
-	void OnTriggerEnter2D(Collider2D collider) { 
+	void OnTriggerEnter2D(Collider2D collider) {
+       // Debug.Log(collider.gameObject.tag);
 		switch(Player.GetComponent<hero2>().level){
 		case 1:
 			if (collider.gameObject.tag == "pino") {
@@ -23,14 +24,16 @@ public class attack_judg2 : MonoBehaviour {
 			}
 			if (collider.gameObject.tag == "tamashibi") {
 				collider.gameObject.GetComponent<Tamashibi_AI3> ().hit ();
-
-			}
+                }
 			if (collider.gameObject.tag == "Kakashi") {
-				Debug.Log (collider.gameObject.tag);
 				collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
 
 			}
-			break;
+            
+            if (collider.gameObject.tag == "shot") { //相手の弾をはじき返す為の試作。
+                collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
+                }
+                break;
 		case 2:
 			if (collider.gameObject.tag == "pino") {
 				//collider.gameObject.GetComponent<Enemy> ().hit ();
@@ -52,7 +55,6 @@ public class attack_judg2 : MonoBehaviour {
 
 			}
 			if (collider.gameObject.tag == "Kakashi") {
-				Debug.Log (collider.gameObject.tag);
 				collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
 				if (Player.GetComponent<hero2> ().SecondAttack == false) {
 					Player.GetComponent<hero2> ().Attack = true;
@@ -63,7 +65,11 @@ public class attack_judg2 : MonoBehaviour {
 				}
 		
 			}
-			break;
+            if (collider.gameObject.tag == "shot")
+                { //相手の弾をはじき返す為の試作。
+                    collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
+                }
+                break;
 		}
 	}
 }

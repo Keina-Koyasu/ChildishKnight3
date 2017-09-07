@@ -7,7 +7,7 @@ public class Tamashibi_AI3 : MonoBehaviour {
 	//public GameObject ATRange;
 
 	private Animator anim;		// 《Animator》コンポーネント用の変数
-	public Transform player;    //プレイヤーを代入
+//	public Transform player;    //プレイヤーを代入
 	public float speed = 3; //移動速度
 	public float knockBack = 0.2f ;
 	public float limitDistance = 1000f; 
@@ -15,7 +15,6 @@ public class Tamashibi_AI3 : MonoBehaviour {
 
 
 	private bool iswalk = true;
-
 
 	// ■■■■■■
 	void Start(){
@@ -25,14 +24,14 @@ public class Tamashibi_AI3 : MonoBehaviour {
 	}
 	void Update () {
 			//controller = GetComponent<CharacterController>();
-			Vector3 playerPos = player.position;    //プレイヤーの位置
+			Vector3 playerPos = Player.transform.position;    //プレイヤーの位置
 			Vector3 direction = playerPos - transform.position; //方向
 			direction = direction.normalized;   //単位化（距離要素を取り除く）
 		if (iswalk) {	
 			transform.position = transform.position + (direction * speed * Time.deltaTime);
 			direction.y -= 9.8f * Time.deltaTime;
 		}
-			Vector3 forward = player.transform.position - transform.position;
+			Vector3 forward = Player.transform.position - transform.position;
 
 		if(forward.x > 0){
 			//transform.Translate(Vector3.right * 0.1f);
@@ -46,17 +45,22 @@ public class Tamashibi_AI3 : MonoBehaviour {
 	// ■■■■■■
 	public void hit(){
 		StartCoroutine("Dead");
+        Debug.Log("T.Hit");
 
 	}
 	IEnumerator Dead(){
-		ATJ.GetComponent<BoxCollider2D>().enabled = false;
+        Debug.Log("T.Dead");
+        ATJ.GetComponent<BoxCollider2D>().enabled = false;
 		GetComponent<ParticleSource> ().particle ();
-		anim.SetTrigger ("die");
+		//anim.SetTrigger ("die");
+		GetComponent<AudioSource> ().Play ();
 		yield return null;
 		yield return new WaitForSeconds(0.4f);
+
 		GetComponent<SpriteRenderer>().enabled = false;
 		yield return null;
 		yield return new WaitForSeconds(1.00f);
+		GetComponent<AudioSource> ().Stop ();
 		Player.gameObject.SendMessage("EXPin", xp); 
 		Destroy(this.gameObject);
 
@@ -90,5 +94,5 @@ public class Tamashibi_AI3 : MonoBehaviour {
 
 
 
-
 }
+	

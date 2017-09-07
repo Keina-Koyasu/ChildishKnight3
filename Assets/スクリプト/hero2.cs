@@ -6,6 +6,7 @@ public class hero2 : MonoBehaviour {
 	public GameObject mainCamera;
 	public GameObject attackEF; //攻撃エフェクト　トリガーの関係で出したり消したりする 
 	public GameObject attackEF2; //攻撃エフェクト　トリガーの関係で出したり消したりする 
+	public GameObject airattackEF;
 	public GameObject DamegeEF; //ダメージ喰らったときのパーティクル
 	public GameObject RevivalEF;//復活の際のエフェクト
 	public GameObject text;  // UIのレベル表示
@@ -36,7 +37,7 @@ public class hero2 : MonoBehaviour {
 	//public bool cooltime = true;
 	private bool footmusic; //足音用falseで音がなっている状態
 	private bool isGrounded; //着地判定
-	private bool isSlop; //着地判定
+
 	public bool Attack = true; //攻撃可能
 	public bool move = true;
 
@@ -76,8 +77,10 @@ public class hero2 : MonoBehaviour {
 
 	void ATKEFDL (){ //animation終わり後に消す目的
 		attackEF.SetActive (false);
+		airattackEF.SetActive (false);
 		Attack = true;
 		attackCount = 0;
+
 	}
 	void ATKEFDL2 (){ //animation終わり後に消す目的
 		attackEF2.SetActive (false);
@@ -86,7 +89,8 @@ public class hero2 : MonoBehaviour {
 		attackCount = 0;
 	}
 
-	//ここは足音に関する項目足音の多重入力を阻止するため一瞬だけplayして止まったら音を消す。空中に行った時も音を消す。foolmusicがfalseになっているときは音がなっている状態。こんなことするもの全てはパッドスティックのせい
+	//ここは足音に関する項目足音の多重入力を阻止するため一瞬だけplayして止まったら音を消す。空中に行った時も音を消す。
+	//foolmusicがfalseになっているときは音がなっている状態。こんなことするもの全てはパッドスティックのせい
 	void Footmusic(){
 		if(footmusic&&isGrounded){
 			GetComponent<AudioSource> ().Play();
@@ -181,6 +185,7 @@ public class hero2 : MonoBehaviour {
 		//レイヤーをCharacterに戻す
 		gameObject.layer = LayerMask.NameToLayer("Character");
 		Attack = true;
+        move = true;
 		DamegeEF.SetActive (false);
 		//isGrounded = true;
 	}
@@ -188,7 +193,8 @@ public class hero2 : MonoBehaviour {
 	{
 		//レベルアップ
 		if (EXP > 99) {
-			level++;
+            //level++;
+            level = 2;
 			text.GetComponent <Text>().text = "Ⅱ";
 			EXP = 0;
 		}
@@ -203,14 +209,8 @@ public class hero2 : MonoBehaviour {
 			Application.LoadLevel ("Title");
 
 		}
-		Debug.Log (footmusic);
 
 
-
-		if (isSlop) {
-			 //rigidbody2D.AddForce (Vector2.up * 50);
-		} 
-		
 
 		//moveがtrueのときに移動とか攻撃とかできる
 		if(move){
@@ -241,22 +241,16 @@ public class hero2 : MonoBehaviour {
 		if(Input.GetKeyDown("w")&&Attack||Input.GetButtonDown ("Douge")&&Attack){
 			//横にスライド
 			// プレイヤーのlocalScaleでどちらを向いているのかを判定
-			if(transform.localScale.x >= 0){
 				Attack = false;
-				gameObject.GetComponent<Rigidbody2D> ().AddForce (transform.right * 100);	
-				anim.SetTrigger("Dodge");
-				gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
-				Invoke ("muteki", 1.0f);
-			}else{
-				Attack = false;
-				gameObject.GetComponent<Rigidbody2D> ().AddForce (transform.right * -100);	
-				anim.SetTrigger("Dodge");
-				gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
-				Invoke ("muteki", 1.0f);
-			
-			}
+                move = false;
 
-		}
+				GetComponent<AudioSource> ().Stop();
+				
+            rigidbody2D.velocity = new Vector2(2.5f * speed * transform.localScale.x, rigidbody2D.velocity.y);
+                    anim.SetTrigger("Dodge");
+				gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
+				Invoke ("muteki", 0.7f);
+			}
 
 		//Linecastで主人公の足元に地面があるか判定
 		isGrounded = Physics2D.Linecast (
@@ -264,10 +258,7 @@ public class hero2 : MonoBehaviour {
 			transform.position - transform.up * 3.75f,
 			groundLayer);
 
-		isSlop = Physics2D.Linecast (
-				transform.position + transform.up * 1,
-				transform.position - transform.up * 3.75f,
-				slopLayer);
+         
 		//スペースキーを押し、
 		if (Input.GetKeyDown ("space")||Input.GetButtonDown ("Jump")) {
 			//着地していた時、
@@ -313,7 +304,15 @@ public class hero2 : MonoBehaviour {
 					break;
 				}	
 			
-			}
+				}else if(isGrounded==false&&Attack){
+					anim.SetTrigger ("airattack");
+					anim.SetBool ("wolk 0", false);
+					airattackEF.SetActive (true);
+					airattackEF.GetComponent<Animator> ().SetTrigger ("attack");
+					airattackEF.GetComponent<attack_judg2> ();
+					Invoke ("ATKEFDL", 0.7f); //0.25f後にアタックエフェクトを消す
+					Attack= false;
+				}
 		}
 		//上下への移動速度を取得
 		float velY = rigidbody2D.velocity.y;

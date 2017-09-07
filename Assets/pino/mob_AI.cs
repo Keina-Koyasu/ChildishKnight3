@@ -52,8 +52,9 @@ public class mob_AI : MonoBehaviour {
 		yield return null;
 		yield return new WaitForSeconds(1.00f);
 		hero.gameObject.SendMessage("EXPin", xp); 
-		Destroy(this.gameObject);
 		GetComponent<AudioSource> ().Stop ();
+		Destroy(this.gameObject);
+
 
 	}
 
