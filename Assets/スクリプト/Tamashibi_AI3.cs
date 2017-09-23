@@ -5,6 +5,7 @@ public class Tamashibi_AI3 : MonoBehaviour {
 	public GameObject ATJ;
 	public GameObject Player;
 	//public GameObject ATRange;
+	public GameObject hiteffect;
 
 	private Animator anim;		// 《Animator》コンポーネント用の変数
 //	public Transform player;    //プレイヤーを代入
@@ -45,18 +46,20 @@ public class Tamashibi_AI3 : MonoBehaviour {
 	// ■■■■■■
 	public void hit(){
 		StartCoroutine("Dead");
-        Debug.Log("T.Hit");
+        //Debug.Log("T.Hit");
 
 	}
 	IEnumerator Dead(){
-        Debug.Log("T.Dead");
+        //Debug.Log("T.Dead");
+		hiteffect.SetActive (true);
         ATJ.GetComponent<BoxCollider2D>().enabled = false;
 		GetComponent<ParticleSource> ().particle ();
 		//anim.SetTrigger ("die");
-		GetComponent<AudioSource> ().Play ();
+
 		yield return null;
 		yield return new WaitForSeconds(0.4f);
-
+		hiteffect.SetActive (false);
+		GetComponent<AudioSource> ().Play ();
 		GetComponent<SpriteRenderer>().enabled = false;
 		yield return null;
 		yield return new WaitForSeconds(1.00f);

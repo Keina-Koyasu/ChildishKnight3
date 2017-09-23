@@ -19,7 +19,7 @@ public class attack_judg2 : MonoBehaviour {
 		case 1:
 			if (collider.gameObject.tag == "pino") {
 				//collider.gameObject.GetComponent<Enemy> ().hit ();
-				collider.gameObject.GetComponent<mob_AI> ().hit ();	
+				collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
 
 			}
 			if (collider.gameObject.tag == "tamashibi") {
@@ -29,7 +29,11 @@ public class attack_judg2 : MonoBehaviour {
 				collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
 
 			}
-            
+			if (collider.gameObject.name == "boss") {
+				//collider.gameObject.GetComponent<Enemy> ().hit ();
+				collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
+
+			}
             if (collider.gameObject.tag == "shot") { //相手の弾をはじき返す為の試作。
                 collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
                 }
@@ -37,7 +41,7 @@ public class attack_judg2 : MonoBehaviour {
 		case 2:
 			if (collider.gameObject.tag == "pino") {
 				//collider.gameObject.GetComponent<Enemy> ().hit ();
-				collider.gameObject.GetComponent<mob_AI> ().hit ();	
+				collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
 				Player.GetComponent<hero2> ().Attack = true;
 				Player.GetComponent<hero2> ().attackCount++;
 				if (Player.GetComponent<hero2> ().SecondAttack == false) {
@@ -64,6 +68,16 @@ public class attack_judg2 : MonoBehaviour {
 					Player.GetComponent<hero2> ().Attack = false;
 				}
 		
+			}
+			if (collider.gameObject.name == "boss") {
+				//collider.gameObject.GetComponent<Enemy> ().hit ();
+				collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
+				Player.GetComponent<hero2> ().Attack = true;
+				Player.GetComponent<hero2> ().attackCount++;
+				if (Player.GetComponent<hero2> ().SecondAttack == false) {
+					Player.GetComponent<hero2> ().Attack = true;
+				}
+
 			}
             if (collider.gameObject.tag == "shot")
                 { //相手の弾をはじき返す為の試作。

@@ -20,6 +20,7 @@ public class hero2 : MonoBehaviour {
 	//ダメージ処理用
 	public float maxLife = 100;    //最大体力（readonlyは変数の変更ができなくなるらしい）
 	public float Life = 100;    //現在体力
+	private bool isdamage=false;
 
 
 
@@ -106,10 +107,12 @@ public class hero2 : MonoBehaviour {
 	//public void Damage (float damage) {
 	//}
 	public void hit(float damage){
+		isdamage = true;
 		Life -= damage; //体力を減らす
 		anim.SetTrigger ("damage");
 		// プレイヤーの位置を後ろに飛ばす
-		float s = 50f * Time.deltaTime;
+
+		float s = 5f * Time.deltaTime;
 		transform.Translate(Vector3.up * s);
 
 		// プレイヤーのlocalScaleでどちらを向いているのかを判定
@@ -153,6 +156,7 @@ public class hero2 : MonoBehaviour {
 		move = true;
 		maxLife += 30f;
 		Life = maxLife;
+		isdamage = false;
 
 	
 	}
@@ -187,6 +191,7 @@ public class hero2 : MonoBehaviour {
 		Attack = true;
         move = true;
 		DamegeEF.SetActive (false);
+		isdamage = false;
 		//isGrounded = true;
 	}
 	void Update ()
@@ -205,12 +210,16 @@ public class hero2 : MonoBehaviour {
 		if(Input.GetKeyDown("o")){
 			StartCoroutine ("Dead");
 		}
+		if(Input.GetKeyDown("l")){
+		transform.position=new Vector3(378.4f,15f,0f);
+		}
+
+
+
 		if (Input.GetButtonDown ("Start")) {
 			Application.LoadLevel ("Title");
 
 		}
-
-
 
 		//moveがtrueのときに移動とか攻撃とかできる
 		if(move){
@@ -327,6 +336,8 @@ public class hero2 : MonoBehaviour {
 	}
 	//↑moveの中身
 	}
+
+
 	void FixedUpdate ()
 	{}
 }

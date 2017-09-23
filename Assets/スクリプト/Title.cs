@@ -31,18 +31,26 @@ public class Title : MonoBehaviour {
 					if (mode) {
 						mode = false;
 						InputTime = 100;
+						GetComponents<AudioSource> ()[0].Play ();
+
 					} else {
 						mode = true;
 						InputTime = 100;
+						GetComponents<AudioSource> ()[0].Play ();
+
 					}
 				}
 				if (Input.GetKeyDown ("up") || 1 == Input.GetAxisRaw ("Vertical")) {
 					if (mode == false) {
 						mode = true;
 						InputTime = 100;
+						GetComponents<AudioSource> ()[0].Play ();
+
 					} else {
 						mode = false;
 						InputTime = 100;
+						GetComponents<AudioSource> ()[0].Play ();
+
 
 					}
 				}
@@ -58,6 +66,8 @@ public class Title : MonoBehaviour {
 		if (Input.GetKey ("a")||Input.GetButtonDown ("Attack")) {
 				blackout.SetActive (true);
 				blackout.GetComponent<blackout> ().fedein = true ;
+				GetComponents<AudioSource> ()[1].Play ();
+
 				
 		}
 	}
