@@ -35,7 +35,8 @@ public class attack_judg2 : MonoBehaviour {
 
 			}
             if (collider.gameObject.tag == "shot") { //相手の弾をはじき返す為の試作。
-                collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
+                 //collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
+				Destroy(collider.gameObject);
                 }
                 break;
 		case 2:
@@ -81,7 +82,8 @@ public class attack_judg2 : MonoBehaviour {
 			}
             if (collider.gameObject.tag == "shot")
                 { //相手の弾をはじき返す為の試作。
-                    collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
+                     //collider.gameObject.SendMessage("hit", attack);   //相手の"Damage"関数を呼び出す
+				Destroy(collider.gameObject);
                 }
                 break;
 		}

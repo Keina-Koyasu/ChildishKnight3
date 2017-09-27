@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI; 
 
 public class boss_AI : MonoBehaviour {
 
@@ -8,10 +9,15 @@ public class boss_AI : MonoBehaviour {
 	public GameObject ATJ2;
 	public GameObject hero;
 	public GameObject hiteffect;
+	public GameObject windwoll;
+
 
 
 	private int shot_count=0; //何個弾を打ったか
+
 	private int action_type = 0;
+	private int melee_attack =0; //近接攻撃のランダム数値
+
 	private Vector3 forward;
 
 	private bool isIdle = true;
@@ -24,6 +30,7 @@ public class boss_AI : MonoBehaviour {
 
 	public float maxLife = 500;    //最大体力（readonlyは変数の変更ができなくなるらしい）
 	public float Life = 500;    //現在体力
+	Slider _slider;
 
 
 	// JumpParams
@@ -38,7 +45,7 @@ public class boss_AI : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animator>();
-
+		_slider = GameObject.Find("Slider").GetComponent<Slider>();
 
 	}
 	void ATJA(){
@@ -49,6 +56,7 @@ public class boss_AI : MonoBehaviour {
 	public void hit(float damage){
 		Life -= damage; //体力を減らす
 		if (Life > 0) {
+			
 			StartCoroutine("hitef");
 		} else {
 			if (Life < 0) {
@@ -60,26 +68,33 @@ public class boss_AI : MonoBehaviour {
 	}
 	IEnumerator hitef(){
 		//anim.SetTrigger ("die");
+
+		//レイヤーをPlayerDamageに変更
+		gameObject.layer = LayerMask.NameToLayer ("PlayerDamage");
 		hiteffect.SetActive (true);
 		yield return null;
 		yield return new WaitForSeconds(0.7f);
 		hiteffect.SetActive (false);
+		gameObject.layer = LayerMask.NameToLayer("Enemy");
 	}
 	IEnumerator Dead(){
+		isIdle = false;
+
 		//GetComponent<AudioSource> ().Play ();
+		gameObject.GetComponent<SpriteRenderer>().color = new Color( 0,0,0,1 );
 		ATJ.GetComponent<BoxCollider2D>().enabled = false;
-		GetComponent<ParticleSource> ().particle ();
+		//GetComponent<ParticleSource> ().particle ();
 		hiteffect.SetActive (true);
 		//anim.SetTrigger ("die");
 		yield return null;
 		yield return new WaitForSeconds(0.4f);
-		GetComponent<AudioSource> ().Play ();
+		//GetComponent<AudioSource> ().Play ();
 		GetComponent<SpriteRenderer>().enabled = false;
 		hiteffect.SetActive (false);
 		yield return null;
 		yield return new WaitForSeconds(1.00f);
 		hero.gameObject.SendMessage("EXPin", xp); 
-		GetComponent<AudioSource> ().Stop ();
+		//GetComponent<AudioSource> ().Stop ();
 
 		Destroy(this.gameObject);
 
@@ -88,22 +103,25 @@ public class boss_AI : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
+		_slider.value = Life;
 		//アイドル状態
 		if(isIdle){
 		//アクティブタイムバトル風に時間で行動させる
 			action_time += Time.deltaTime;
 			if(action_time>3){
-
+				//およそ三秒ごとに距離をはかって遠近の攻撃を判定する
 				Vector3 Apos = hero.transform.position;
 				Vector3 Bpos = this.transform.position;
 				float dis = Vector3.Distance(Apos,Bpos);
 				Debug.Log("Distance : " + dis);
 				action_time = 0;
-				if (dis < 19 && dis > 9) {
-					action_type = 1;
+				if (dis < 19 && dis > 8) {
+					melee_attack = Random.Range(1, 3);
+					Debug.Log (melee_attack);
+					//action_type = 1;
+					//windwoll.SetActive (true);
 				} else if (dis > 18) {
-					action_type = 3;
+					action_type = Random.Range(1, 3);
 				}
 			//ランダムでモーション種類基準となる番号を取得
 				//action_type = Random.Range(1, 2);
@@ -149,7 +167,7 @@ public class boss_AI : MonoBehaviour {
 		*/
 
 		//Attack
-		if(action_type == 1){
+		if(melee_attack == 1){
 			isIdle = false;
 			//isAttack = true;
 			anim.SetBool("attack1", true);
@@ -160,7 +178,13 @@ public class boss_AI : MonoBehaviour {
 			//スリープ
 			StartCoroutine("WaitFotAttack");
 		}
-		if(action_type ==  2){
+		if(melee_attack == 2){
+			isIdle = false;
+			//isAttack = true;
+			windwoll.SetActive(true);
+			StartCoroutine("WaitFotAttack");
+		}
+		if(action_type ==  1){
 			isIdle = false;
 			//isAttack = true;
 			anim.SetBool("attack2", true);
@@ -171,7 +195,7 @@ public class boss_AI : MonoBehaviour {
 			//スリープ
 			StartCoroutine("WaitFotAttack2");
 		}
-		if(action_type == 3){
+		if(action_type == 2){
 			isIdle = false;
 
 			//isAttack = true;
@@ -237,7 +261,10 @@ public class boss_AI : MonoBehaviour {
 		anim.SetBool("attack1", false);
 		anim.SetBool("attack3", false);
 		ATJ.SetActive (false);
+		windwoll.SetActive (false);
 		action_type = 0;
+		melee_attack = 0;
+
 		shot_count = 0;
 
 	}
