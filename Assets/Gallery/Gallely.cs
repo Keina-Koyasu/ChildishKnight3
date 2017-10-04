@@ -4,6 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Gallely : MonoBehaviour {
+	SpriteRenderer cpSpriteRenderer;
+	// publicで宣言し、inspectorで設定可能にする
+	public Sprite cp0; //ストーリーのイメージ挿絵
+	public Sprite cp1;
+	public Sprite cp2;
+	public Sprite cp3;
+	public Sprite cp4;
+	public GameObject cpimage;
+
 	//大枠のセット
 	public GameObject  Character;
 	public GameObject  manu;
@@ -54,7 +63,7 @@ public class Gallely : MonoBehaviour {
 	MovingSelect  select = MovingSelect.MainManu;
 	// Use this for initialization
 	void Start () {
-		
+		cpSpriteRenderer = cpimage.GetComponent<SpriteRenderer>();
 	}
 	// Update is called once per frame
 	void Update () {
@@ -229,20 +238,28 @@ public class Gallely : MonoBehaviour {
 		switch (select_chapter) {
 		case 0:
 			shortstory.GetComponent <Text> ().text = "冷たい雨が窓を打ち付ける\n長い夜が始まるようだ\n\nねぇあなた御本を読んでくれないかしら？\n\n……夜は怖い悪魔が来るのです\n早く眠りについてください\n朝日が貴女を祝福してくれるはずです\n\nつまらない騎士様ね\n私を寝かせたいのならあくびが出るくらい\n退屈な話でもしてくださいな";
-			shortstory.GetComponent<Text>().fontSize= 43;
+			shortstory.GetComponent<Text>().fontSize= 29;
+			cpSpriteRenderer.sprite = cp0;
 			break;
 		case 1:
 			shortstory.GetComponent <Text> ().text = "青い鳥-あらすじ-\nあるところに仲のいい兄妹がいました\n\r親もいなく決して豊かではありませんでしたが\n二人は自分たちが不幸だとは思っていませんでした\nそんな二人のところに吟遊詩人がやってきて言います\n君たちが心の底から幸せだと思っているのなら\n青い鳥がやってきて君たちの願いをなんでも1つ\n叶えてくれるだろう\nさぁ森へお行き。こんなところに篭っていては\n青い鳥もやっては来れないさ\n兄妹は森へ向います\n二人には叶えてもらいたい\n願いがあるのですから……\n";
-			shortstory.GetComponent<Text>().fontSize= 33;
+			shortstory.GetComponent<Text>().fontSize= 28;
+			cpSpriteRenderer.sprite = cp1;
 			break;
 		case 2:
-
+			shortstory.GetComponent<Text> ().text = "3びきのこぶた-あらすじ-\nあるところに仲良しの３びきのこぶたがいました\nそんな３びきを食べようと狼がやってきました\n狼に食べられないように３びきは\n家を建てることにしました\n即席で作った藁の家は吹き飛ばされ\n普通の木の家は危険な狼の前では無力だった\nかくなる上は――\n３びきは鉄壁城塞の一夜城を建てたのです\nさてさて、狼はこの一夜城を前にして\nどうするのでしょうか？";
+			shortstory.GetComponent<Text>().fontSize= 29;
+			cpSpriteRenderer.sprite = cp2;
 			break;
 		case 3:
-
+			shortstory.GetComponent<Text> ().text = "魔法使いたち-あらすじ-\nやぁやぁ、今回のあらすじ担当はボクだよ\nえっ、誰だって？ ボクだよカカシだよ\n第3章は『魔法使いたち』だよ！\n魔法使いと聞いたらキミは誰を思い浮かべるかな？\nまっ、誰でも良いんだけどね:) ←笑ってる顔文字\n物語も架橋に入ってきたよ\n今回はどんな物語が壊れていくんだろうね\nボクもそろそろ役割を果たさないと\n今行くよドロシー";
+			shortstory.GetComponent<Text>().fontSize= 29;
+			cpSpriteRenderer.sprite = cp3;
 			break;
 		case 4:
-	
+			shortstory.GetComponent<Text> ().text = "子供じみた騎士の夜-あらすじ-\n物語には始まりと終わりがある\n全てが最初から決められていたことだとしたら\nオレの全ては語り手の一夜の夢？\n\nようやく来てくれたのね私の騎士様\n\nもう、こんな物語を終わらせよう";
+			shortstory.GetComponent<Text>().fontSize= 37;
+			cpSpriteRenderer.sprite = cp4;
 			break;
 
 		}
