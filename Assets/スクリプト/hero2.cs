@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;   // UIを使います。
+using System.Collections.Generic;
 using System.Collections;
 
 public class hero2 : MonoBehaviour {
@@ -10,7 +11,12 @@ public class hero2 : MonoBehaviour {
 	public GameObject DamegeEF; //ダメージ喰らったときのパーティクル
 	public GameObject RevivalEF;//復活の際のエフェクト
 	public GameObject text;  // UIのレベル表示
-	//public GameObject rose;
+
+	//ボイス音関連
+	AudioSource audioSource;  // ここコピペ
+	public List<AudioClip> audioClip = new List<AudioClip>();  // ここコピペ
+	private int voice=0;//ランダムで再生されるボイス用int Random.Range(0,2)などintは最大数が含まれない
+
 
 	public float speed = 10f; //歩くスピード
 	public float jumpPower = 200; //ジャンプ力
@@ -21,6 +27,10 @@ public class hero2 : MonoBehaviour {
 	public float maxLife = 100;    //最大体力（readonlyは変数の変更ができなくなるらしい）
 	public float Life = 100;    //現在体力
 	private bool isdamage=false;
+
+	//待機モーションとかよう
+	private float idlelimit=10f; //十秒間操作がなかったらとか
+	private bool ismoving=false;//動いている状態
 
 
 
@@ -45,6 +55,7 @@ public class hero2 : MonoBehaviour {
 
 	void Start () {
 		//各コンポーネントをキャッシュしておく
+		audioSource = gameObject.AddComponent<AudioSource>();  // ここコピペ
 		anim = GetComponent<Animator>();
 		rigidbody2D = GetComponent<Rigidbody2D>();
 		rigidbody2D.fixedAngle = true;
@@ -56,6 +67,12 @@ public class hero2 : MonoBehaviour {
 
 
 	void attack1(){
+		voice = Random.Range(0,2);
+		if (voice == 0) {
+		audioSource.PlayOneShot(audioClip[0]);  //ボイス
+		}else{
+			audioSource.PlayOneShot(audioClip[1]);  //ボイス
+		}
 		anim.SetBool ("wolk 0", false);
 		anim.SetTrigger ("attack");
 		attackEF.SetActive (true);
@@ -66,6 +83,7 @@ public class hero2 : MonoBehaviour {
 	}
 
 	void attack2(){
+		audioSource.PlayOneShot(audioClip[2]);  //ボイス
 		anim.SetBool ("wolk 0", false);
 		anim.SetTrigger ("attack2");
 		attackEF2.SetActive (true);
@@ -81,6 +99,7 @@ public class hero2 : MonoBehaviour {
 		airattackEF.SetActive (false);
 		Attack = true;
 		attackCount = 0;
+		ismoving = false;
 
 	}
 	void ATKEFDL2 (){ //animation終わり後に消す目的
@@ -88,6 +107,7 @@ public class hero2 : MonoBehaviour {
 		Attack = true;
 		SecondAttack = false;
 		attackCount = 0;
+		ismoving = false;
 	}
 
 	//ここは足音に関する項目足音の多重入力を阻止するため一瞬だけplayして止まったら音を消す。空中に行った時も音を消す。
@@ -107,9 +127,11 @@ public class hero2 : MonoBehaviour {
 	//public void Damage (float damage) {
 	//}
 	public void hit(float damage){
+
 		isdamage = true;
 		Life -= damage; //体力を減らす
 		anim.SetTrigger ("damage");
+		anim.SetBool ("airattack",false);
 		// プレイヤーの位置を後ろに飛ばす
 
 		float s = 5f * Time.deltaTime;
@@ -124,6 +146,11 @@ public class hero2 : MonoBehaviour {
 
 		 //ダメージを受けた時にライフが〜
 		if (Life > 0) {
+			if(Life>30){
+			audioSource.PlayOneShot(audioClip[6]);  //ボイス
+			}else if(Life<31){
+				audioSource.PlayOneShot(audioClip[7]);  //ボイス
+			}
 			//StartCoroutine ("Damage");
 			DamegeEF.SetActive (true);
 			Invoke ("muteki", 2.5f);
@@ -131,6 +158,13 @@ public class hero2 : MonoBehaviour {
 			gameObject.layer = LayerMask.NameToLayer ("PlayerDamage");
 		} else {
 			if (Life < 0) {
+				voice = Random.Range(0,2);
+				if (voice == 0) {
+					audioSource.PlayOneShot(audioClip[10]);  //ボイス
+				}else{
+					audioSource.PlayOneShot(audioClip[11]);  //ボイス
+				}
+
 				StartCoroutine ("Dead");
 			}
 		}
@@ -157,6 +191,12 @@ public class hero2 : MonoBehaviour {
 		maxLife += 30f;
 		Life = maxLife;
 		isdamage = false;
+		voice = Random.Range(0,2);
+		if (voice == 0) {
+			audioSource.PlayOneShot(audioClip[12]);  //ボイス
+		}else{
+			audioSource.PlayOneShot(audioClip[13]);  //ボイス
+		}
 
 	
 	}
@@ -192,6 +232,7 @@ public class hero2 : MonoBehaviour {
         move = true;
 		DamegeEF.SetActive (false);
 		isdamage = false;
+		ismoving=false; //動いてない扱い
 		//isGrounded = true;
 	}
 	void Update ()
@@ -202,6 +243,7 @@ public class hero2 : MonoBehaviour {
             level = 2;
 			text.GetComponent <Text>().text = "Ⅱ";
 			EXP = 0;
+			audioSource.PlayOneShot(audioClip[15]);  //ボイス
 		}
 		//デバッグ用コード
 		if(Input.GetKeyDown("p")){
@@ -214,16 +256,33 @@ public class hero2 : MonoBehaviour {
 		transform.position=new Vector3(378.4f,15f,0f);
 		}
 
-
-
 		if (Input.GetButtonDown ("Start")) {
 			Application.LoadLevel ("Title");
 
 		}
 
+		if(isGrounded){//地上にいる時
+			anim.SetBool ("airattack", false);
+		}
+
+
+		//何もしてない状態を作る
+		if(ismoving==false){
+			idlelimit -=Time.deltaTime;
+		}else if(ismoving==true){
+			idlelimit=10f;
+		}
+		if(idlelimit<1){
+			audioSource.PlayOneShot(audioClip[14]);  //ボイス
+			idlelimit=10f;
+		}
+		//Debug.Log (idlelimit);
+
+
 		//moveがtrueのときに移動とか攻撃とかできる
 		if(move){
 		if (-1 == Input.GetAxisRaw ("Horizontal") || Input.GetKey ("left")) {
+				ismoving=true;
 			rigidbody2D.velocity = new Vector2 (-1 * speed, rigidbody2D.velocity.y);
 			Vector2 temp = transform.localScale;
 			temp.x = -1;
@@ -232,7 +291,8 @@ public class hero2 : MonoBehaviour {
 				anim.SetBool ("wolk 0", true);
 				Footmusic ();
 		} else if(1 == Input.GetAxisRaw ("Horizontal") || Input.GetKey ("right")){
-			rigidbody2D.velocity = new Vector2 (1 * speed, rigidbody2D.velocity.y);
+				ismoving=true;
+				rigidbody2D.velocity = new Vector2 (1 * speed, rigidbody2D.velocity.y);
 			Vector2 temp = transform.localScale;
 			temp.x = 1;
 			transform.localScale = temp;
@@ -244,11 +304,20 @@ public class hero2 : MonoBehaviour {
 			anim.SetBool ("wolk 0", false);
 				GetComponent<AudioSource> ().Stop();
 				footmusic = true;
+				ismoving=false;
 
 		}
 		//回避
 		if(Input.GetKeyDown("w")&&Attack||Input.GetButtonDown ("Douge")&&Attack){
-			//横にスライド
+				voice = Random.Range(0,2);
+				ismoving=true;
+				if (voice == 0) {
+					audioSource.PlayOneShot(audioClip[8]);  //ボイス
+				}else{
+					audioSource.PlayOneShot(audioClip[9]);  //ボイス
+				}
+
+				//横にスライド
 			// プレイヤーのlocalScaleでどちらを向いているのかを判定
 				Attack = false;
                 move = false;
@@ -270,8 +339,10 @@ public class hero2 : MonoBehaviour {
          
 		//スペースキーを押し、
 		if (Input.GetKeyDown ("space")||Input.GetButtonDown ("Jump")) {
+				ismoving=true;
 			//着地していた時、
 			if (isGrounded) {
+					audioSource.PlayOneShot(audioClip[5]);  //ボイス
 				//Dashアニメーションを止めて、Jumpアニメーションを実行
 				anim.SetBool("wolk 0", false);
 				anim.SetTrigger("jump");
@@ -285,7 +356,9 @@ public class hero2 : MonoBehaviour {
 		}
 		//攻撃
 		if (Input.GetKeyDown ("q")||Input.GetButtonDown ("Attack")) {
-			if (isGrounded && Attack&& SecondAttack==false) {
+				ismoving = true;
+				if (isGrounded && Attack&& SecondAttack==false) {
+					
 				switch( level ){
 				case 1:
 					attack1();
@@ -314,7 +387,15 @@ public class hero2 : MonoBehaviour {
 				}	
 			
 				}else if(isGrounded==false&&Attack){
-					anim.SetTrigger ("airattack");
+					
+					voice = Random.Range(0,2);
+					if (voice == 0) {
+						audioSource.PlayOneShot(audioClip[3]);  //ボイス
+					}else{
+						audioSource.PlayOneShot(audioClip[4]);  //ボイス
+					}
+
+					anim.SetBool ("airattack",  true);
 					anim.SetBool ("wolk 0", false);
 					airattackEF.SetActive (true);
 					airattackEF.GetComponent<Animator> ().SetTrigger ("attack");

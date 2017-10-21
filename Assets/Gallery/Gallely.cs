@@ -36,6 +36,9 @@ public class Gallely : MonoBehaviour {
 	public GameObject  from;
 	//public GameObject  ;
 
+	AudioSource audioSource;  // ここコピペ
+	public List<AudioClip> audioClip = new List<AudioClip>();  // ここコピペ
+	private int voice=0;//ランダムで再生されるボイス用int Random.Range(0,2)などintは最大数が含まれない
 
 	private int action_type = 0;//アクションのランダム用
 	private int select_type = 0; //モードセレクト用
@@ -64,6 +67,7 @@ public class Gallely : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		cpSpriteRenderer = cpimage.GetComponent<SpriteRenderer>();
+		audioSource = gameObject.AddComponent<AudioSource>();  // ここコピペ
 	}
 	// Update is called once per frame
 	void Update () {
@@ -382,15 +386,36 @@ public class Gallely : MonoBehaviour {
 		if (Input.GetKeyDown ("a")||Input.GetButtonDown ("Attack")) {
 			action_type = Random.Range(0,7);
 			if (action_type > 5) {
+				voice = Random.Range(0,2);
+				if (voice == 0) {
+					audioSource.PlayOneShot(audioClip[0]);  //ボイス
+				}else{
+					audioSource.PlayOneShot(audioClip[1]);  //ボイス
+				}
 				hero.GetComponent<Animator> ().SetTrigger ("attack");
 			} else if (action_type > 4) {
 				hero.GetComponent<Animator> ().SetTrigger ("attack2");
+				audioSource.PlayOneShot(audioClip[2]);  //ボイス
 			} else if (action_type > 3) {
 			hero.GetComponent<Animator> ().SetTrigger ("jump");
+				audioSource.PlayOneShot(audioClip[5]);  //ボイス
 			}else if (action_type > 2) {
+				voice = Random.Range(0,2);
+				if (voice == 0) {
+					audioSource.PlayOneShot(audioClip[8]);  //ボイス
+				}else{
+					audioSource.PlayOneShot(audioClip[9]);  //ボイス
+				}
 				hero.GetComponent<Animator> ().SetTrigger ("Dodge");
 			}else if (action_type > 1) {
 				hero.GetComponent<Animator> ().SetTrigger ("Dead");
+				voice = Random.Range(0,2);
+				if (voice == 0) {
+					audioSource.PlayOneShot(audioClip[10]);  //ボイス
+				}else{
+					audioSource.PlayOneShot(audioClip[11]);  //ボイス
+				}
+
 			}else if (action_type > 0) {
 				hero.GetComponent<Animator> ().SetTrigger ("walk");
 			}
@@ -398,6 +423,7 @@ public class Gallely : MonoBehaviour {
 
 	}
 	void updateKakashi(){
+		
 		kakashi.SetActive (true);
 		hero.SetActive (false);
 		tamashibi.SetActive (false);
@@ -427,6 +453,7 @@ public class Gallely : MonoBehaviour {
 
 		if (Input.GetKeyDown ("a") || Input.GetButtonDown ("Attack")) {
 			kakashi.GetComponent<Animator> ().SetTrigger ("die");
+			audioSource.PlayOneShot(audioClip[16]);  //ボイス
 		}
 
 	}
